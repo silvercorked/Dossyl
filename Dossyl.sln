@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DossylEditor", "DossylEditor\DossylEditor.csproj", "{8E05532E-0105-487A-A23C-C511E2D89E5E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{75962091-7D8D-4369-9A41-DDEF63F770F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{75962091-7D8D-4369-9A41-DDEF63F770F5}.Debug|x64.ActiveCfg = Debug|x64
+		{75962091-7D8D-4369-9A41-DDEF63F770F5}.Debug|x64.Build.0 = Debug|x64
+		{75962091-7D8D-4369-9A41-DDEF63F770F5}.Release|x64.ActiveCfg = Release|x64
+		{75962091-7D8D-4369-9A41-DDEF63F770F5}.Release|x64.Build.0 = Release|x64
+		{8E05532E-0105-487A-A23C-C511E2D89E5E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8E05532E-0105-487A-A23C-C511E2D89E5E}.Debug|x64.Build.0 = Debug|Any CPU
+		{8E05532E-0105-487A-A23C-C511E2D89E5E}.Release|x64.ActiveCfg = Release|Any CPU
+		{8E05532E-0105-487A-A23C-C511E2D89E5E}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0E2FA355-08CF-4B22-A0D2-ADAC245DFEC4}
+	EndGlobalSection
+EndGlobal
