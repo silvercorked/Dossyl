@@ -1,6 +1,7 @@
 ﻿using DossylEditor.GameProject;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,11 @@ namespace DossylEditor {
         public MainWindow() {
             InitializeComponent();
             Loaded += OnMainWindowLoaded;
+            Closing += OnMainWindowClosing;
+        }
+        private void OnMainWindowClosing(object? sender, CancelEventArgs e) {
+            Closing -= OnMainWindowClosing;
+            Project.Current?.Unload();
         }
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e) {
             Loaded -= OnMainWindowLoaded;
@@ -29,11 +35,12 @@ namespace DossylEditor {
         }
         private void OpenProjectBrowserDialog() {
             var projectBroswer = new ProjectBrowserDialog();
-            if (projectBroswer.ShowDialog() == false) { // user hit X
+            if (projectBroswer.ShowDialog() == false || projectBroswer.DataContext == null) { // user hit X or no project was created/opened
                 Application.Current.Shutdown();
             }
             else { // open project
-
+                Project.Current?.Unload();
+                DataContext = projectBroswer.DataContext;
             }
         }
     }
