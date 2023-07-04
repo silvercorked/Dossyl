@@ -1,5 +1,7 @@
-﻿using System;
+﻿using DossylEditor.GameProject;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,14 @@ namespace DossylEditor.Editors
         public WorldEditorView()
         {
             InitializeComponent();
+            Loaded += OnWorldEditorViewLoaded;
+        }
+
+        private void OnWorldEditorViewLoaded(object sender, RoutedEventArgs e) {
+            Loaded -= OnWorldEditorViewLoaded;
+            Focus();
+            // when doing an undo, a focused item may be discarded, leaving the entire usercontrol unfocused. This refocuses when the undo list changes
+            ((INotifyCollectionChanged)Project.undoRedo.UndoList).CollectionChanged += (s, e) => Focus();
         }
     }
 }
