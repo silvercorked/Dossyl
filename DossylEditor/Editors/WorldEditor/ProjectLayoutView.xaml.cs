@@ -1,5 +1,6 @@
 ﻿using DossylEditor.Components;
 using DossylEditor.GameProject;
+using DossylEditor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,28 @@ namespace DossylEditor.Editors {
         }
 
         private void OnGameEntitities_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            var entity = (sender as ListBox).SelectedItems[0];
-            GameEntityView.Instance.DataContext = entity;
+            GameEntityView.Instance.DataContext = null;
+            var listBox = (sender as ListBox);
+            if (e.AddedItems.Count > 0) {
+                GameEntityView.Instance.DataContext = listBox.SelectedItems[0];
+            }
+            var newSelection = listBox.SelectedItems.Cast<GameEntity>().ToList();
+            var previousSelection = newSelection.Except(e.AddedItems.Cast<GameEntity>()).Concat(e.RemovedItems.Cast<GameEntity>()).ToList();
+            Project.undoRedo.Add(new UndoRedoAction(
+                () => {
+                    listBox.UnselectAll();
+                    previousSelection.ForEach(
+                        x => (listBox.ItemContainerGenerator.ContainerFromItem(x) as ListBoxItem).IsSelected = true
+                    );
+                },
+                () => {
+                    listBox.UnselectAll();
+                    newSelection.ForEach(
+                        x => (listBox.ItemContainerGenerator.ContainerFromItem(x) as ListBoxItem).IsSelected = true
+                    );
+                },
+                "Selection Changed"
+            ));
         }
     }
 }

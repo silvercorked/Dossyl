@@ -19,7 +19,18 @@ namespace DossylEditor.GameProject {
     public partial class ProjectBrowserDialog : Window {
         public ProjectBrowserDialog() {
             InitializeComponent();
+            Loaded += OnProjectBrowserDialogLoaded;
         }
+
+        private void OnProjectBrowserDialogLoaded(object sender, RoutedEventArgs e) {
+            Loaded -= OnProjectBrowserDialogLoaded;
+            if (!OpenProject.Projects.Any()) { // swap to create project, since no projects
+                openProjectButton.IsEnabled = false;
+                openProjectView.Visibility = Visibility.Hidden;
+                OnToggleButton_Click(createProjectButton, new RoutedEventArgs());
+            }
+        }
+
         private void OnToggleButton_Click(object sender, RoutedEventArgs e) {
             if (sender == openProjectButton) {
                 if (createProjectButton.IsChecked == true) {

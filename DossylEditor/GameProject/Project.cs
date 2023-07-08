@@ -54,8 +54,12 @@ namespace DossylEditor.GameProject {
             Debug.Assert(File.Exists(file));
             return Serializer.FromFile<Project>(file);
         }
+        public void Unload() {
+            undoRedo.Reset();
+        }
         public static void Save(Project project) {
             Serializer.ToFile(project, project.FullPath);
+            Logger.Log(MessageType.Info, $"Saved project to {project.FullPath}");
         }
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context) {
@@ -86,9 +90,6 @@ namespace DossylEditor.GameProject {
             UndoCommand = new RelayCommand<object>(x => undoRedo.Undo());
             RedoCommand = new RelayCommand<object>(x => undoRedo.Redo());
             SaveCommand = new RelayCommand<object>(x => Save(this));
-        }
-        public void Unload() {
-
         }
         public Project(string name, string path) { // for in code use only. Projects are now made through templates and UI
             Name = name;

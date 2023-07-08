@@ -77,6 +77,28 @@ namespace DossylEditor.GameProject {
         private ObservableCollection<ProjectTemplate> _projectTemplates = new ObservableCollection<ProjectTemplate>();
         public ReadOnlyObservableCollection<ProjectTemplate> ProjectTemplates { get; }
 
+        public NewProject() {
+            ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplate>(_projectTemplates);
+            try {
+                var templatesFiles = Directory.GetFiles(_templatePath, "template.xml", SearchOption.AllDirectories);
+                Debug.Assert(templatesFiles.Any());
+                foreach (var file in templatesFiles) {
+                    var template = Serializer.FromFile<ProjectTemplate>(file);
+                    template.IconFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Icon.png"));
+                    template.Icon = File.ReadAllBytes(template.IconFilePath);
+                    template.ScreenshotFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Screenshot.png"));
+                    template.Screenshot = File.ReadAllBytes(template.ScreenshotFilePath);
+                    template.ProjectFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), template.ProjectFile));
+                    _projectTemplates.Add(template);
+                }
+                ValidateProjectPath();
+            } catch (Exception ex) {
+                Debug.WriteLine(ex.Message);
+                Logger.Log(MessageType.Error, $"Failed to read project templates");
+                throw;
+            }
+        }
+
         private bool ValidateProjectPath() {
             var path = ProjectPath;
             if (!Path.EndsInDirectorySeparator(path)) path += @"\";
@@ -130,29 +152,8 @@ namespace DossylEditor.GameProject {
                 return path;
             } catch (Exception ex) {
                 Debug.WriteLine(ex.Message);
-                // TODO: log errors
-                return string.Empty;
-            }
-        }
-
-        public NewProject() {
-            ProjectTemplates = new ReadOnlyObservableCollection<ProjectTemplate>(_projectTemplates);
-            try {
-                var templatesFiles = Directory.GetFiles(_templatePath, "template.xml", SearchOption.AllDirectories);
-                Debug.Assert(templatesFiles.Any());
-                foreach (var file in templatesFiles) {
-                    var template = Serializer.FromFile<ProjectTemplate>(file);
-                    template.IconFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Icon.png"));
-                    template.Icon = File.ReadAllBytes(template.IconFilePath);
-                    template.ScreenshotFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), "Screenshot.png"));
-                    template.Screenshot = File.ReadAllBytes(template.ScreenshotFilePath);
-                    template.ProjectFilePath = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(file), template.ProjectFile));
-                    _projectTemplates.Add(template);
-                }
-                ValidateProjectPath();
-            } catch (Exception ex) {
-                Debug.WriteLine(ex.Message);
-                // TODO: log errors
+                Logger.Log(MessageType.Error, $"Failed to create {ProjectName}");
+                throw;
             }
         }
     }
