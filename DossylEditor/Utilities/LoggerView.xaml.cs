@@ -13,16 +13,25 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DossylEditor.Utilities
-{
+namespace DossylEditor.Utilities {
     /// <summary>
     /// Interaction logic for LoggerView.xaml
     /// </summary>
-    public partial class LoggerView : UserControl
-    {
-        public LoggerView()
-        {
+    public partial class LoggerView : UserControl {
+        public LoggerView() {
             InitializeComponent();
+        }
+
+        private void OnClear_Button_Click(object sender, RoutedEventArgs e) {
+            Logger.Clear();
+        }
+
+        private void OnMessageFilter_ButtonClick(object sender, RoutedEventArgs e) {
+            Int32 filter = 0;
+            if (toggleInfos.IsChecked == true) filter |= (int) MessageType.Info;
+            if (toggleWarnings.IsChecked == true) filter |= (int) MessageType.Warning;
+            if (toggleErrors.IsChecked == true) filter |= (int) MessageType.Error;
+            Logger.SetMessageFilter(filter);
         }
     }
 }

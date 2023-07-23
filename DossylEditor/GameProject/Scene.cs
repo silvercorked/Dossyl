@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace DossylEditor.GameProject {
     [DataContract]
-    public class Scene : ViewModelBase {
+    class Scene : ViewModelBase {
         private string _name;
         [DataMember]
         public string Name {

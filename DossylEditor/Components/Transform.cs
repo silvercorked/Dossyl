@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DossylEditor.Components {
     [DataContract]
-    public class Transform : Component {
+    class Transform : Component {
         private Vector3 _position;
         [DataMember]
         public Vector3 Position {

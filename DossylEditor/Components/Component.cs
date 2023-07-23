@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DossylEditor.Components {
+    interface IMSComponent { } // used in place of MSComponent to avoid specifying the generic type
+
     [DataContract]
-    public class Component : ViewModelBase {
+    abstract class Component : ViewModelBase {
         [DataMember]
         public GameEntity Owner { get; private set; }
 
@@ -16,5 +18,9 @@ namespace DossylEditor.Components {
             Debug.Assert(entity != null);
             Owner = entity;
         }
+    }
+
+    abstract class MSComponent<T> : ViewModelBase, IMSComponent where T : Component {
+
     }
 }

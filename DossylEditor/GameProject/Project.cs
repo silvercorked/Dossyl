@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace DossylEditor.GameProject {
     [DataContract(Name = "Game")]
-    public class Project : ViewModelBase{
+    class Project : ViewModelBase{
         public static string Extension { get; } = ".dossyl";
         [DataMember]
         public string Name { get; private set; } = "New Project";
