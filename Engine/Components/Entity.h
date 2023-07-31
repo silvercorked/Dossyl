@@ -12,8 +12,8 @@ namespace dossyl {
 			transform::initInfo* transform{ nullptr };
 		};
 
-		EntityId createGameEntity(const EntityInfo& info);
-		void removeGameEntity(EntityId id);
-		bool isAlive(EntityId id);
+		auto createGameEntity(const EntityInfo& info) -> Entity;
+		auto removeGameEntity(Entity id) -> void;
+		auto isAlive(Entity id) -> bool;
 	}
 }
