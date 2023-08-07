@@ -15,7 +15,7 @@ namespace dossyl::id {
 	using IdType = u32;
 
 	namespace internal {
-		constexpr u32 generationBits{ 8 };
+		constexpr u32 generationBits{ 10 };
 		constexpr u32 indexBits{ sizeof(IdType) * 8 - generationBits };
 
 		constexpr IdType generationMask{ (IdType{1} << generationBits) - 1 };

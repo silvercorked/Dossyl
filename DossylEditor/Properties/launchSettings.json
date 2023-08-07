@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DossylEditor": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

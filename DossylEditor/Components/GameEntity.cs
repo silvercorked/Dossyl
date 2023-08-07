@@ -1,4 +1,5 @@
-﻿using DossylEditor.GameProject;
+﻿using DossylEditor.DllWrapper;
+using DossylEditor.GameProject;
 using DossylEditor.Utilities;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,33 @@ namespace DossylEditor.Components {
     [DataContract]
     [KnownType(typeof(Transform))]
     class GameEntity : ViewModelBase {
+        private int _entityId = ID.INVALID_ID;
+        public int EntityId {
+            get => _entityId;
+            set {
+                if (_entityId != value) {
+                    _entityId = value;
+                    OnPropertyChanged(nameof(EntityId));
+                }
+            }
+        }
+        private bool _isActive;
+        public bool IsActive {
+            get => _isActive;
+            set {
+                if (_isActive != value) {
+                    _isActive = value;
+                    if (_isActive) {
+                        EntityId = EngineAPI.CreateGameEntity(this);
+                        Debug.Assert(ID.IsValid(_entityId));
+                    }
+                    else {
+                        EngineAPI.RemoveGameEntity(this);
+                    }
+                    OnPropertyChanged(nameof(_isActive));
+                }
+            }
+        }
         private bool _isEnabled = true;
         [DataMember]
         public bool IsEnabled {
@@ -43,6 +71,9 @@ namespace DossylEditor.Components {
         [DataMember(Name = nameof(Components))]
         private readonly ObservableCollection<Component> _components = new ObservableCollection<Component>();
         public ReadOnlyObservableCollection<Component> Components { get; private set; }
+
+        public Component GetComponent(Type type) => Components.FirstOrDefault(c => c.GetType() == type);
+        public T GetComponent<T>() where T : Component => GetComponent(typeof(T)) as T;
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context) {
