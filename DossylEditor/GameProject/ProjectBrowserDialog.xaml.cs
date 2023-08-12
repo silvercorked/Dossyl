@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -17,6 +18,7 @@ namespace DossylEditor.GameProject {
     /// Interaction logic for ProjectBrowserDialog.xaml
     /// </summary>
     public partial class ProjectBrowserDialog : Window {
+        private readonly CubicEase _easing = new CubicEase() { EasingMode = EasingMode.EaseInOut };
         public ProjectBrowserDialog() {
             InitializeComponent();
             Loaded += OnProjectBrowserDialogLoaded;
@@ -35,17 +37,37 @@ namespace DossylEditor.GameProject {
             if (sender == openProjectButton) {
                 if (createProjectButton.IsChecked == true) {
                     createProjectButton.IsChecked = false;
-                    browserContent.Margin = new Thickness(0);
+                    AnimateToOpenProject();
+                    newProjectView.IsEnabled = false;
+                    openProjectView.IsEnabled = true;
                 }
                 openProjectButton.IsChecked = true;
             }
             else {
                 if (openProjectButton.IsChecked == true) {
                     openProjectButton.IsChecked = false;
-                    browserContent.Margin = new Thickness(-800, 0, 0, 0);
+                    AnimateToCreateProject();
+                    openProjectView.IsEnabled = false;
+                    newProjectView.IsEnabled = true;
                 }
                 createProjectButton.IsChecked = true;
             }
+        }
+        private void AnimateToOpenProject() {
+            var highlightAnimation = new DoubleAnimation(400, 210, new Duration(TimeSpan.FromSeconds(0.2)));
+            highlightAnimation.EasingFunction = _easing;
+            var viewAnimation = new ThicknessAnimation(new Thickness(-1600, 0, 0, 0), new Thickness(0), new Duration(TimeSpan.FromSeconds(0.5)));
+            viewAnimation.EasingFunction = _easing;
+            browserContent.BeginAnimation(MarginProperty, viewAnimation);
+            highlightRect.BeginAnimation(Canvas.LeftProperty, highlightAnimation);
+        }
+        private void AnimateToCreateProject() {
+            var highlightAnimation = new DoubleAnimation(210, 400, new Duration(TimeSpan.FromSeconds(0.2)));
+            highlightAnimation.EasingFunction = _easing;
+            var viewAnimation = new ThicknessAnimation(new Thickness(0), new Thickness(-1600, 0, 0, 0), new Duration(TimeSpan.FromSeconds(0.5)));
+            viewAnimation.EasingFunction = _easing;
+            browserContent.BeginAnimation(MarginProperty, viewAnimation);
+            highlightRect.BeginAnimation(Canvas.LeftProperty, highlightAnimation);
         }
     }
 }

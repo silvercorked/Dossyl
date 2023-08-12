@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:DossylEditor"
         xmlns:editors="clr-namespace:DossylEditor.Editors"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Dossyl Editor" Height="1080" Width="1920">
+        Title="Dossyl Editor" Height="1080" Width="1920"    
+        Style="{StaticResource DossylWindowStyle}">
     <Grid>
         <editors:WorldEditorView />
     </Grid>

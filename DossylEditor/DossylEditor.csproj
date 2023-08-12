@@ -10,4 +10,12 @@
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Fonts\AgencyFB-Bold.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\AgencyFB-Bold.ttf" />
+  </ItemGroup>
+
 </Project>
