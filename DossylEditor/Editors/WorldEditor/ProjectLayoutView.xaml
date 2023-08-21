@@ -33,7 +33,7 @@
                             <Expander.Header>
                                 <Grid>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Name}" />
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource LightTextBlockStyle}"/>
                                         <Button Content="Remove"
                                                 Command="{Binding DataContext.RemoveSceneCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}" Margin="20,0" Focusable="False"/>
@@ -49,7 +49,7 @@
                                 ItemsSource="{Binding GameEntities}"
                                 IsEnabled="{Binding IsActive}"
                                 SelectionMode="Extended"
-                                SelectionChanged="OnGameEntitities_ListBox_SelectionChanged"
+                                SelectionChanged="OnGameEntities_ListBox_SelectionChanged"
                              >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>

@@ -1,6 +1,8 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:DossylEditor.Dictionaries">
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:DossylEditor.Dictionaries"
+>
     <Color x:Key="Editor.Window.GreyColor1">#ff1f1f1f</Color>
     <Color x:Key="Editor.Window.GreyColor2">#ff262626</Color>
     <Color x:Key="Editor.Window.GreyColor3">#ff313131</Color>

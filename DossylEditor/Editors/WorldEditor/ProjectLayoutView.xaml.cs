@@ -31,7 +31,7 @@ namespace DossylEditor.Editors {
             vm.AddGameEntityCommand.Execute(new GameEntity(vm) { Name = "Empty Game Entity" });
         }
 
-        private void OnGameEntitities_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+        private void OnGameEntities_ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             var listBox = (sender as ListBox);
             var newSelection = listBox.SelectedItems.Cast<GameEntity>().ToList();
             var previousSelection = newSelection.Except(e.AddedItems.Cast<GameEntity>()).Concat(e.RemovedItems.Cast<GameEntity>()).ToList();
