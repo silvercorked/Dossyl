@@ -31,8 +31,6 @@ namespace DossylEditor.Editors
         private void OnWorldEditorViewLoaded(object sender, RoutedEventArgs e) {
             Loaded -= OnWorldEditorViewLoaded;
             Focus();
-            // when doing an undo, a focused item may be discarded, leaving the entire usercontrol unfocused. This refocuses when the undo list changes
-            ((INotifyCollectionChanged)Project.undoRedo.UndoList).CollectionChanged += (s, e) => Focus();
         }
     }
 }

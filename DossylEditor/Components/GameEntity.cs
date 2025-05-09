@@ -37,8 +37,9 @@ namespace DossylEditor.Components {
                         EntityId = EngineAPI.CreateGameEntity(this);
                         Debug.Assert(ID.IsValid(_entityId));
                     }
-                    else {
+                    else if (ID.IsValid(EntityId)) {
                         EngineAPI.RemoveGameEntity(this);
+						EntityId = ID.INVALID_ID;
                     }
                     OnPropertyChanged(nameof(_isActive));
                 }
@@ -120,6 +121,10 @@ namespace DossylEditor.Components {
 
         public List<GameEntity> SelectedEntities { get; }
 
+		public T GetMSComponent<T>() where T : IMSComponent {
+			return (T)Components.FirstOrDefault(x => x.GetType() == typeof(T));
+		}
+
         public MSEntity(List<GameEntity> entities) {
             Debug.Assert(entities?.Any() == true);
             Components = new ReadOnlyObservableCollection<IMSComponent>(_components);
@@ -129,28 +134,31 @@ namespace DossylEditor.Components {
                     UpdateGameEntities(e.PropertyName);
             };
         }
+		private void MakeComponentList() {
+			_components.Clear();
+			var firstEntity = SelectedEntities.FirstOrDefault();
+			if (firstEntity == null) return;
+			foreach(var component in firstEntity.Components) {
+				var type = component.GetType();
+				if (!SelectedEntities.Skip(1).Any(entity => entity.GetComponent(type) == null)) {
+					Debug.Assert(Components.FirstOrDefault(x => x.GetType() == type) == null);
+					_components.Add(component.GetMultiselectionComponent(this));
+				}
+			}
+		}
 
-        public static float? GetMixedValue(List<GameEntity> entities, Func<GameEntity, float> getProperty) {
-            var value = getProperty(entities.First());
-            foreach (var entity in entities.Skip(1)) {
-                if (value.IsTheSameAs(getProperty(entity))) return null;
-            }
-            return value;
+		public static float? GetMixedValue<T>(List<T> objects, Func<T, float> getProperty) {
+            var value = getProperty(objects.First());
+			return objects.Skip(1).Any(x => !getProperty(x).IsTheSameAs(value)) ? (float?)null : value;
         }
-        public static bool? GetMixedValue(List<GameEntity> entities, Func<GameEntity, bool> getProperty) {
-            var value = getProperty(entities.First());
-            foreach (var entity in entities.Skip(1)) {
-                if (value != getProperty(entity)) return null;
-            }
-            return value;
-        }
-        public static string GetMixedValue(List<GameEntity> entities, Func<GameEntity, string> getProperty) {
-            var value = getProperty(entities.First());
-            foreach (var entity in entities.Skip(1)) {
-                if (value != getProperty(entity)) return null;
-            }
-            return value;
-        }
+        public static bool? GetMixedValue<T>(List<T> objects, Func<T, bool> getProperty) {
+            var value = getProperty(objects.First());
+			return objects.Skip(1).Any(x => getProperty(x) != value) ? (bool?)null : value;
+		}
+        public static string GetMixedValue<T>(List<T> objects, Func<T, string> getProperty) {
+            var value = getProperty(objects.First());
+			return objects.Skip(1).Any(x => getProperty(x) != value) ? null : value;
+		}
         protected virtual bool UpdateGameEntities(string propertyName) {
             switch (propertyName) {
                 case nameof(IsEnabled): SelectedEntities.ForEach(x => x.IsEnabled = IsEnabled.Value); return true;
@@ -168,9 +176,10 @@ namespace DossylEditor.Components {
         public void Refresh() {
             _enableUpdates = false;
             UpdateMSGameEntity();
+			MakeComponentList();
             _enableUpdates = true;
         }
-    }
+	}
 
     class MSGameEntity : MSEntity {
         public MSGameEntity(List<GameEntity> entities) : base(entities) {

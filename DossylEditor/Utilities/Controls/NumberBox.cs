@@ -57,6 +57,7 @@ namespace DossylEditor.Utilities.Controls {
 			_captured = true;
 			_valueChangedOnDrag = false;
 			e.Handled = true;
+			Focus();
 
 			_mouseXStart = e.GetPosition(this).X;
 		}
