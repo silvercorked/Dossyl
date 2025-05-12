@@ -11,7 +11,7 @@
 using namespace dossyl;
 
 namespace {
-	struct TransformComponent { //
+	struct TransformComponent {
 		f32 position[3];
 		f32 rotation[3];
 		f32 scale[3];
@@ -43,10 +43,10 @@ EDITOR_INTERFACE auto CreateGameEntity(GameEntityDescriptor* e) -> id::IdType {
 	GameEntityDescriptor& desc{ *e };
 	transform::InitInfo transformInfo{ desc.transform.toInitInfo() };
 	gameEntity::EntityInfo entityInfo { &transformInfo };
-	return gameEntity::createGameEntity(entityInfo).getId();
+	return gameEntity::create(entityInfo).getId();
 }
 
 EDITOR_INTERFACE auto RemoveGameEntity(id::IdType id) -> void {
 	assert(id::isValid(id));
-	gameEntity::removeGameEntity(entityFromId(id));
+	gameEntity::remove(gameEntity::EntityId{ id });
 }

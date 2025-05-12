@@ -11,7 +11,7 @@ namespace dossyl::transform {
 
 	} // anonymous namespace
 
-	auto createTransform(const InitInfo& info, gameEntity::Entity entity) -> Component {
+	auto create(InitInfo info, gameEntity::Entity entity) -> Component {
 		assert(entity.isValid());
 		const id::IdType entityIndex { id::index(entity.getId()) };
 		if (positions.size() > entityIndex) {
@@ -27,7 +27,7 @@ namespace dossyl::transform {
 		}
 		return Component(TransformId{ entity.getId() });
 	}
-	auto removeTransform(Component c) -> void {
+	auto remove(Component c) -> void {
 		assert(c.isValid());
 	}
 

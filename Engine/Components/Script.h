@@ -2,12 +2,10 @@
 
 #include "ComponentsCommon.h"
 
-namespace dossyl::transform {
-	
+namespace dossyl::script {
+
 	struct InitInfo {
-		f32 position[3]{};
-		f32 rotation[4]{};
-		f32 scale[3]{ 1.f, 1.f, 1.f };
+		detail::script_creator scriptCreator;
 	};
 
 	auto create(InitInfo info, gameEntity::Entity entity) -> Component;

@@ -1,11 +1,13 @@
 
 #include "Entity.h"
 #include "Transform.h"
+#include "Script.h"
 
 namespace dossyl::gameEntity {
 	namespace { // anonymous namespace
 
 		util::vector<transform::Component>		transforms;
+		util::vector<script::Component>			scripts;
 
 		util::vector<id::GenerationType>		generations;
 		util::deque<EntityId>					freeIds;
@@ -17,13 +19,13 @@ namespace dossyl::gameEntity {
 			deleted: has been used before, has been removed, and is ready for reuse, and has an entry in freeIds
 			non-existant: does not yet exist and has never been used (not stored in a list)
 	*/
-	auto createGameEntity(const EntityInfo& info) -> Entity {
+	auto create(EntityInfo info) -> Entity {
 		assert(info.transform); // all game entities must have a transform component
 		if (!info.transform) return Entity();
 		EntityId id;
 		if (freeIds.size() > id::minDeletedElements) { // ok to pull id from freed ids deque
 			id = freeIds.front();
-			assert(!isAlive(Entity{ id }));
+			assert(!isAlive(id));
 			freeIds.pop_front();
 			id = EntityId{ id::newGeneration(id) };
 			++generations[id::index(id)];
@@ -41,23 +43,27 @@ namespace dossyl::gameEntity {
 
 		// create transform component
 		assert(!transforms[index].isValid());
-		transforms[index] = transform::createTransform(*info.transform, nEntity);
+		transforms[index] = transform::create(*info.transform, nEntity);
 		if (!transforms[index].isValid()) return Entity{};
+
+		// Create script component
+		if (info.script && info.script->scriptCreator) {
+			assert(!scripts[index].isValid());
+			scripts[index] = script::create(*info.script, nEntity);
+			assert(scripts[index].isValid());
+		}
 
 		return nEntity;
 	}
-	auto removeGameEntity(Entity e) -> void {
-		const EntityId id{ e.getId() };
+	auto remove(EntityId id) -> void {
 		const id::IdType index{ id::index(id) };
-		assert(isAlive(e));
-		if (isAlive(e)) {
-			transform::removeTransform(transforms[index]);
-			transforms[index] = transform::Component{};
-			freeIds.push_back(id);
-		}
+		assert(isAlive(id));
+		transform::remove(transforms[index]);
+		transforms[index] = transform::Component{};
+		freeIds.push_back(id);
 	}
-	auto isAlive(Entity e) -> bool {
-		const EntityId id{ e.getId() };
+	auto isAlive(EntityId id) -> bool {
+		assert(id::isValid(id));
 		const id::IdType index {id::index(id)};
 		assert(index < generations.size()); // generations holds an elem for each alive elem, so if bigger, cant be alive
 		assert(generations[index] == id::generation(id)); // check that generation portion is the same in generations and the given entity
@@ -68,8 +74,14 @@ namespace dossyl::gameEntity {
 	}
 
 	auto Entity::transform() const -> transform::Component {
-		assert(isAlive(*this));
+		assert(isAlive(this->_id));
 		const id::IdType index {id::index(this->_id) };
 		return transforms[index];
+	}
+
+	auto Entity::script() const -> script::Component {
+		assert(isAlive(this->_id));
+		const id::IdType index{ id::index(this->_id) };
+		return scripts[index];
 	}
 }

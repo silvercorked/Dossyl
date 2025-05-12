@@ -4,12 +4,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DossylEditor", "DossylEditor\DossylEditor.csproj", "{8E05532E-0105-487A-A23C-C511E2D89E5E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{03778512-3084-4B49-A8A5-CFDDC9637473} = {03778512-3084-4B49-A8A5-CFDDC9637473}
+		{63369D46-839A-4F2C-BD9F-66B300E1D6A7} = {63369D46-839A-4F2C-BD9F-66B300E1D6A7}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{75962091-7D8D-4369-9A41-DDEF63F770F5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EngineTest", "EngineTest\EngineTest.vcxproj", "{03778512-3084-4B49-A8A5-CFDDC9637473}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63369D46-839A-4F2C-BD9F-66B300E1D6A7} = {63369D46-839A-4F2C-BD9F-66B300E1D6A7}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EngineDLL", "EngineDLL\EngineDLL.vcxproj", "{63369D46-839A-4F2C-BD9F-66B300E1D6A7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{75962091-7D8D-4369-9A41-DDEF63F770F5} = {75962091-7D8D-4369-9A41-DDEF63F770F5}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
