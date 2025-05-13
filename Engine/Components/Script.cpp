@@ -10,12 +10,12 @@ namespace dossyl::script {
 		util::vector<id::GenerationType>		generations;
 		util::deque<ScriptId>					freeIds;
 
-		using script_registery = std::unordered_map<size_t, detail::script_creator>;
-		auto registery() -> script_registery& {
+		using script_registry = std::unordered_map<size_t, detail::script_creator>;
+		auto registery() -> script_registry& {
 			/* NOTE: static var placed in function because initialization order of static data
 					 this assures the script_registery is defined beforea class is registered.
 			*/
-			static script_registery reg;
+			static script_registry reg;
 			return reg;
 		}
 
@@ -32,7 +32,7 @@ namespace dossyl::script {
 
 	namespace detail {
 		auto registerScript(size_t tag, script_creator func) -> u8 {
-			bool result{ registery().insert(script_registery::value_type{tag, func}).second};
+			bool result{ registery().insert(script_registry::value_type{tag, func}).second};
 			assert(result);
 			return static_cast<u8>(result);
 		}
@@ -58,9 +58,9 @@ namespace dossyl::script {
 		}
 
 		assert(id::isValid(id));
-		entityScripts.emplace_back(info.scriptCreator(entity));
-		assert(entityScripts.back()->getId() == entity.getId());
 		const id::IdType index{ static_cast<id::IdType>(entityScripts.size()) };
+		entityScripts.emplace_back(info.scriptCreator(entity)); // index is now last elem
+		assert(entityScripts.back()->getId() == entity.getId());
 		idMapping[id::index(id)] = index;
 
 		return Component{id};

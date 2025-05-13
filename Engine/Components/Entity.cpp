@@ -37,6 +37,7 @@ namespace dossyl::gameEntity {
 
 			transforms.emplace_back(); // add default component to end of transforms (and grab extra memory for later)
 			// could use transforms.resize(generations.size) but will result in more memory grabs, which is expensive
+			scripts.emplace_back();
 		}
 		const Entity nEntity{ id };
 		const id::IdType index{ id::index(id) };
@@ -58,6 +59,12 @@ namespace dossyl::gameEntity {
 	auto remove(EntityId id) -> void {
 		const id::IdType index{ id::index(id) };
 		assert(isAlive(id));
+
+		if (scripts[index].isValid()) {
+			script::remove(scripts[index]);
+			scripts[index] = {};
+		}
+
 		transform::remove(transforms[index]);
 		transforms[index] = transform::Component{};
 		freeIds.push_back(id);

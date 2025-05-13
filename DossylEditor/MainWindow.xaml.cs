@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DossylEditor {
     /// <summary>
@@ -25,15 +25,37 @@ namespace DossylEditor {
             Loaded += OnMainWindowLoaded;
             Closing += OnMainWindowClosing;
         }
-        private void OnMainWindowClosing(object? sender, CancelEventArgs e) {
+
+		public static string DossylPath { get; private set; } = @"C:\Users\Alex\source\repos\Dossyl"; // TODO replace/set in installation process
+
+		private void OnMainWindowClosing(object? sender, CancelEventArgs e) {
             Closing -= OnMainWindowClosing;
             Project.Current?.Unload();
         }
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e) {
             Loaded -= OnMainWindowLoaded;
+			GetEnginePath();
             OpenProjectBrowserDialog();
         }
-        private void OpenProjectBrowserDialog() {
+
+		private void GetEnginePath() {
+			var dossylPath = Environment.GetEnvironmentVariable("DOSSYL_ENGINE", EnvironmentVariableTarget.User);
+			if (dossylPath == null || !Directory.Exists(Path.Combine(dossylPath, @"Engine\EngineAPI"))) {
+				var dlg = new EnginePathDialog();
+				if (dlg.ShowDialog() == true) {
+					DossylPath = dlg.DossylPath;
+					Environment.SetEnvironmentVariable("DOSSYL_ENGINE", DossylPath.ToUpper(), EnvironmentVariableTarget.User);
+				}
+				else {
+					Application.Current.Shutdown();
+				}
+			}
+			else {
+				DossylPath = dossylPath;
+			}
+		}
+
+		private void OpenProjectBrowserDialog() {
             var projectBroswer = new ProjectBrowserDialog();
             if (projectBroswer.ShowDialog() == false || projectBroswer.DataContext == null) { // user hit X or no project was created/opened
                 Application.Current.Shutdown();
