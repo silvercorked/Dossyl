@@ -2,22 +2,22 @@
 #include "Transform.h"
 #include "Entity.h"
 
-namespace dossyl::transform {
+namespace Dossyl::Transform {
 	namespace {
 
-		util::vector<math::v3> positions;
-		util::vector<math::v4> rotations;
-		util::vector<math::v3> scales;
+		Util::vector<Math::v3> positions;
+		Util::vector<Math::v4> rotations;
+		Util::vector<Math::v3> scales;
 
 	} // anonymous namespace
 
-	auto create(InitInfo info, gameEntity::Entity entity) -> Component {
+	auto create(InitInfo info, GameEntity::Entity entity) -> Component {
 		assert(entity.isValid());
-		const id::IdType entityIndex { id::index(entity.getId()) };
+		const Id::IdType entityIndex { Id::index(entity.getId()) };
 		if (positions.size() > entityIndex) {
-			positions[entityIndex] = math::v3(info.position);
-			rotations[entityIndex] = math::v4(info.rotation);
-			scales[entityIndex] = math::v3(info.scale);
+			positions[entityIndex] = Math::v3(info.position);
+			rotations[entityIndex] = Math::v4(info.rotation);
+			scales[entityIndex] = Math::v3(info.scale);
 		}
 		else {
 			assert(positions.size() == entityIndex);
@@ -31,16 +31,16 @@ namespace dossyl::transform {
 		assert(c.isValid());
 	}
 
-	auto Component::position() const->math::v3 {
+	auto Component::position() const->Math::v3 {
 		assert(isValid());
-		return positions[id::index(_id)];
+		return positions[Id::index(_id)];
 	}
-	auto Component::rotation() const->math::v4 {
+	auto Component::rotation() const->Math::v4 {
 		assert(isValid());
-		return rotations[id::index(_id)];
+		return rotations[Id::index(_id)];
 	}
-	auto Component::scale() const->math::v3 {
+	auto Component::scale() const->Math::v3 {
 		assert(isValid());
-		return scales[id::index(_id)];
+		return scales[Id::index(_id)];
 	}
 }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <PlatformTarget>x64</PlatformTarget>
@@ -12,6 +12,11 @@
 
   <ItemGroup>
     <None Remove="Fonts\AgencyFB-Bold.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="envdte" Version="17.14.40260" />
+    <PackageReference Include="envdte80" Version="17.14.40260" />
   </ItemGroup>
 
   <ItemGroup>

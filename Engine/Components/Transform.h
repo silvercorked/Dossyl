@@ -2,7 +2,7 @@
 
 #include "ComponentsCommon.h"
 
-namespace dossyl::transform {
+namespace Dossyl::Transform {
 	
 	struct InitInfo {
 		f32 position[3]{};
@@ -10,6 +10,6 @@ namespace dossyl::transform {
 		f32 scale[3]{ 1.f, 1.f, 1.f };
 	};
 
-	auto create(InitInfo info, gameEntity::Entity entity) -> Component;
+	auto create(InitInfo info, GameEntity::Entity entity) -> Component;
 	auto remove(Component c) -> void;
 }

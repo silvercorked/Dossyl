@@ -1,4 +1,5 @@
-﻿using DossylEditor.GameProject;
+﻿using DossylEditor.GameDev;
+using DossylEditor.GameProject;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -31,6 +32,11 @@ namespace DossylEditor.Editors
         private void OnWorldEditorViewLoaded(object sender, RoutedEventArgs e) {
             Loaded -= OnWorldEditorViewLoaded;
             Focus();
+        }
+
+		private void OnNewScript_Button_Click(Object sender, RoutedEventArgs e) {
+			var dlg = new NewScriptDialog();
+			dlg.ShowDialog(); // handles file creation on it's own
         }
     }
 }

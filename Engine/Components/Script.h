@@ -2,12 +2,12 @@
 
 #include "ComponentsCommon.h"
 
-namespace dossyl::script {
+namespace Dossyl::Script {
 
 	struct InitInfo {
-		detail::script_creator scriptCreator;
+		Detail::script_creator scriptCreator;
 	};
 
-	auto create(InitInfo info, gameEntity::Entity entity) -> Component;
+	auto create(InitInfo info, GameEntity::Entity entity) -> Component;
 	auto remove(Component c) -> void;
 }

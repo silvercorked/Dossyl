@@ -2,18 +2,18 @@
 
 #include "ComponentsCommon.h"
 
-namespace dossyl {
+namespace Dossyl {
 
-#define INIT_INFO(component) namespace component { struct InitInfo; }
+#define INIT_INFO(Component) namespace Component { struct InitInfo; }
 
-	INIT_INFO(transform); // forward declaration from transform namespace (transform.h)
-	INIT_INFO(script);
+	INIT_INFO(Transform); // forward declaration from transform namespace (transform.h)
+	INIT_INFO(Script);
 
 #undef INIT_INFO
-	namespace gameEntity {
+	namespace GameEntity {
 		struct EntityInfo {
-			transform::InitInfo* transform{ nullptr };
-			script::InitInfo* script{ nullptr };
+			Transform::InitInfo* transform{ nullptr };
+			Script::InitInfo* script{ nullptr };
 		};
 
 		auto create(EntityInfo info) -> Entity;

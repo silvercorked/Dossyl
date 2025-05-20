@@ -2,7 +2,7 @@
 
 #include "../Components/ComponentsCommon.h"
 
-namespace dossyl::script {
+namespace Dossyl::Script {
 
 	DEFINE_TYPED_ID(ScriptId);
 
@@ -10,8 +10,8 @@ namespace dossyl::script {
 		ScriptId _id;
 	public:
 		constexpr explicit Component(ScriptId id) : _id{ id } {}
-		constexpr Component() : _id{ id::invalidId } {}
+		constexpr Component() : _id{ Id::invalidId } {}
 		constexpr ScriptId getId() const { return _id; }
-		constexpr bool isValid() const { return id::isValid(_id); }
+		constexpr bool isValid() const { return Id::isValid(_id); }
 	};
 }

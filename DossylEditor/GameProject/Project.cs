@@ -1,4 +1,5 @@
-﻿using DossylEditor.Utilities;
+﻿using DossylEditor.GameDev;
+using DossylEditor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,8 +20,10 @@ namespace DossylEditor.GameProject {
         public string Name { get; private set; } = "New Project";
         [DataMember]
         public string Path { get; private set; }
-        public string FullPath => $@"{Path}{Name}\{Name}{Extension}";
-        [DataMember(Name = "Scenes")]
+        public string FullPath => $@"{Path}{Name}{Extension}";
+		public string Solution => $@"{Path}{Name}.sln";
+
+		[DataMember(Name = "Scenes")]
         private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
         public ReadOnlyObservableCollection<Scene> Scenes { get; private set; }
         private Scene _activeScene;
@@ -55,6 +58,7 @@ namespace DossylEditor.GameProject {
             return Serializer.FromFile<Project>(file);
         }
         public void Unload() {
+			VisualStudio.CloseVisualStudio();
             undoRedo.Reset();
         }
         public static void Save(Project project) {

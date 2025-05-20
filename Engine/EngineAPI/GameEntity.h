@@ -6,8 +6,8 @@
 #include "ScriptComponent.h"
 #include <string>
 
-namespace dossyl {
-	namespace gameEntity {
+namespace Dossyl {
+	namespace GameEntity {
 
 		DEFINE_TYPED_ID(EntityId);
 
@@ -15,35 +15,35 @@ namespace dossyl {
 			EntityId _id;
 		public:
 			constexpr explicit Entity(EntityId id) : _id{ id } {}
-			constexpr Entity() : _id{ id::invalidId } {}
+			constexpr Entity() : _id{ Id::invalidId } {}
 			constexpr EntityId getId() const { return _id; }
-			constexpr bool isValid() const { return id::isValid(_id); }
+			constexpr bool isValid() const { return Id::isValid(_id); }
 
-			auto transform() const -> transform::Component;
-			auto script() const -> script::Component;
+			auto transform() const -> Transform::Component;
+			auto script() const -> Script::Component;
 		};
-	} // namespace gameEntity
+	} // namespace GameEntity
 
-	namespace script {
-		class EntityScript : public gameEntity::Entity {
+	namespace Script {
+		class EntityScript : public GameEntity::Entity {
 		public:
 			virtual ~EntityScript() = default;
 			virtual auto beginPlay() -> void {}
 			virtual auto update(float) -> void {}
 		protected:
-			constexpr explicit EntityScript(gameEntity::Entity entity) :
-				gameEntity::Entity{ entity.getId() }
+			constexpr explicit EntityScript(GameEntity::Entity entity) :
+				GameEntity::Entity{ entity.getId() }
 			{}
 		};
-		namespace detail {
+		namespace Detail {
 			using script_ptr = std::unique_ptr<EntityScript>;
-			using script_creator = script_ptr(*)(gameEntity::Entity entity);
+			using script_creator = script_ptr(*)(GameEntity::Entity entity);
 			using string_hash = std::hash<std::string>;
 
 			auto registerScript(size_t, script_creator) -> u8;
 
 			template <typename ScriptClass>
-			auto createScript(gameEntity::Entity entity) -> script_ptr {
+			auto createScript(GameEntity::Entity entity) -> script_ptr {
 				assert(entity.isValid());
 				return std::make_unique<ScriptClass>(entity);
 			}
@@ -52,13 +52,13 @@ namespace dossyl {
 		class TYPE;																						\
 		namespace {																						\
 			const u8 _register##TYPE{																	\
-				dossyl::script::detail::registerScript(													\
-					dossyl::script::detail::string_hash{}(#TYPE),										\
-					&dossyl::script::detail::createScript<TYPE>											\
+				Dossyl::Script::Detail::registerScript(													\
+					Dossyl::Script::Detail::string_hash{}(#TYPE),										\
+					&Dossyl::Script::Detail::createScript<TYPE>											\
 				)																						\
 			};																							\
 		}
 // end define REGISTER_SCRIPT
-		} // namespace detail
-	} // namespace script
+		} // namespace Detail
+	} // namespace Script
 }

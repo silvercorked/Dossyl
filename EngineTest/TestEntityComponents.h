@@ -7,10 +7,10 @@
 #include <iostream>
 #include <ctime>
 
-using namespace dossyl;
+using namespace Dossyl;
 
 class EngineTest : public Test {
-	util::vector<gameEntity::Entity> _entities;
+	Util::vector<GameEntity::Entity> _entities;
 	u32 _added{ 0 };
 	u32 _removed{ 0 };
 	u32 _numEntities{ 0 };
@@ -37,16 +37,16 @@ private:
 	void createRandom() {
 		u32 count = rand() % 20;
 		if (_entities.empty()) count = 1000;
-		transform::InitInfo transformInfo{};
-		gameEntity::EntityInfo entityInfo {
+		Transform::InitInfo transformInfo{};
+		GameEntity::EntityInfo entityInfo {
 			&transformInfo
 		};
 		while (count > 0) {
 			_added++;
-			gameEntity::Entity entity {gameEntity::create(entityInfo)};
-			assert(entity.isValid() && id::isValid(entity.getId()));
+			GameEntity::Entity entity {GameEntity::create(entityInfo)};
+			assert(entity.isValid() && Id::isValid(entity.getId()));
 			_entities.push_back(entity);
-			assert(gameEntity::isAlive(entity.getId()));
+			assert(GameEntity::isAlive(entity.getId()));
 			count--;
 		}
 	}
@@ -55,12 +55,12 @@ private:
 		if (_entities.size() < 1000) return;
 		while (count > 0) {
 			const u32 index{ (u32) rand() % (u32) _entities.size() };
-			const gameEntity::Entity entity {_entities[index]};
-			assert(entity.isValid() && id::isValid(entity.getId()));
+			const GameEntity::Entity entity {_entities[index]};
+			assert(entity.isValid() && Id::isValid(entity.getId()));
 			if (entity.isValid()) {
-				gameEntity::remove(entity.getId());
+				GameEntity::remove(entity.getId());
 				_entities.erase(_entities.begin() + index);
-				assert(!gameEntity::isAlive(entity.getId()));
+				assert(!GameEntity::isAlive(entity.getId()));
 				_removed++;
 			}
 			count--;

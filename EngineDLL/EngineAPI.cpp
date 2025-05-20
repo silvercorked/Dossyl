@@ -8,7 +8,7 @@
 #include "..\Engine\Components\Entity.h"
 #include "..\Engine\Components\Transform.h"
 
-using namespace dossyl;
+using namespace Dossyl;
 
 namespace {
 	struct TransformComponent {
@@ -16,9 +16,9 @@ namespace {
 		f32 rotation[3];
 		f32 scale[3];
 
-		auto [[nodiscard]] toInitInfo() -> transform::InitInfo {
+		auto [[nodiscard]] toInitInfo() -> Transform::InitInfo {
 			using namespace DirectX;
-			transform::InitInfo info{};
+			Transform::InitInfo info{};
 			memcpy(&info.position[0], &position[0], sizeof(f32) * _countof(position));
 			memcpy(&info.scale[0], &scale[0], sizeof(f32) * _countof(scale));
 			XMFLOAT3A rot{ &rotation[0] };
@@ -33,20 +33,20 @@ namespace {
 		TransformComponent transform;
 	};
 
-	gameEntity::Entity entityFromId(id::IdType id) {
-		return gameEntity::Entity{ gameEntity::EntityId{id} };
+	GameEntity::Entity entityFromId(Id::IdType id) {
+		return GameEntity::Entity{ GameEntity::EntityId{id} };
 	}
 } // anonymous namespace
 
-EDITOR_INTERFACE auto CreateGameEntity(GameEntityDescriptor* e) -> id::IdType {
+EDITOR_INTERFACE auto CreateGameEntity(GameEntityDescriptor* e) -> Id::IdType {
 	assert(e);
 	GameEntityDescriptor& desc{ *e };
-	transform::InitInfo transformInfo{ desc.transform.toInitInfo() };
-	gameEntity::EntityInfo entityInfo { &transformInfo };
-	return gameEntity::create(entityInfo).getId();
+	Transform::InitInfo transformInfo{ desc.transform.toInitInfo() };
+	GameEntity::EntityInfo entityInfo { &transformInfo };
+	return GameEntity::create(entityInfo).getId();
 }
 
-EDITOR_INTERFACE auto RemoveGameEntity(id::IdType id) -> void {
-	assert(id::isValid(id));
-	gameEntity::remove(gameEntity::EntityId{ id });
+EDITOR_INTERFACE auto RemoveGameEntity(Id::IdType id) -> void {
+	assert(Id::isValid(id));
+	GameEntity::remove(GameEntity::EntityId{ id });
 }

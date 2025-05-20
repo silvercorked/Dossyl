@@ -4,7 +4,7 @@
 #define USE_STL_DEQUE	1
 #if USE_STL_VECTOR
 #include <vector>
-namespace dossyl::util {
+namespace Dossyl::Util {
 	template <typename T>
 	using vector = std::vector<T>;
 
@@ -23,12 +23,12 @@ namespace dossyl::util {
 
 #if USE_STL_DEQUE
 #include <deque>
-namespace dossyl::util {
+namespace Dossyl::Util {
 	template <typename T>
 	using deque = std::deque<T>;
 }
 #endif
 
-namespace dossyl::util {
+namespace Dossyl::Util {
 	// TODO: implement our own containers
 }
