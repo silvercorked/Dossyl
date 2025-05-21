@@ -26,7 +26,7 @@ namespace DossylEditor {
             Closing += OnMainWindowClosing;
         }
 
-		public static string DossylPath { get; private set; } = @"H:\projects\c++\Dossyl"; // TODO replace/set in installation process
+		public static string DossylPath { get; private set; } // set via env and user prompt
 
 		private void OnMainWindowClosing(object? sender, CancelEventArgs e) {
             Closing -= OnMainWindowClosing;

@@ -8,13 +8,19 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices;
 using System.IO;
+using DossylEditor.GameProject;
 
 namespace DossylEditor.GameDev {
     static class VisualStudio {
-        private static EnvDTE80.DTE2 _vsInstance = null;
+
+		public static bool BuildSucceeded { get; private set; } = true;
+		public static bool BuildDone { get; private set; } = true;
+
+		private static EnvDTE80.DTE2 _vsInstance = null;
         private static readonly string _progId = "VisualStudio.DTE.17.0"; // grab vs 2022 only (would be nice to open this using whatever windows associates with the .sln extension
-        // like visual studio and unreal engine do. maybe improvement for later
-        [DllImport("ole32.dll")]
+
+		// like visual studio and unreal engine do. maybe improvement for later
+		[DllImport("ole32.dll")]
         private static extern int CreateBindCtx(uint reserved, out IBindCtx ppbc);
         [DllImport("ole32.dll")]
         private static extern int GetRunningObjectTable(uint reserved, out IRunningObjectTable pprot);
@@ -104,6 +110,72 @@ namespace DossylEditor.GameDev {
 				return false;
 			}
 			return true;
+		}
+		private static void OnBuildSolutionBegin(String project, String projectConfig, String platform, String solutionConfig) {
+			Logger.Log(MessageType.Info, $"Building {project}, {projectConfig}, {platform}, {solutionConfig}");
+		}
+		private static void OnBuildSolutionDone(String project, String projectConfig, String platform, String solutionConfig, bool success) {
+			if (BuildDone) return;
+
+			if (success) Logger.Log(MessageType.Info, $"Building {projectConfig} configuration succeeded");
+			else Logger.Log(MessageType.Error, $"Building {projectConfig} configuration failed");
+
+			BuildDone = true;
+			BuildSucceeded = success;
+		}
+		public static bool IsDebugging() {
+			bool result = false;
+			for (int i = 0; i < 3; ++i) {
+				try {
+					result = _vsInstance != null &&
+						(_vsInstance.Debugger.CurrentProgram != null || _vsInstance.Debugger.CurrentMode == EnvDTE.dbgDebugMode.dbgRunMode);
+					break;
+				} catch (Exception ex) {
+					Debug.WriteLine(ex.Message);
+					if (!result) System.Threading.Thread.Sleep(1000);
+				}
+			}
+			return result;
+		}
+
+		internal static void BuildSolution(Project project, String configName, bool showWindow = true) {
+			if (VisualStudio.IsDebugging()) {
+				Logger.Log(MessageType.Error, "Visual Studio is currently running a process.");
+				return;
+			}
+
+			OpenVisualStudio(project.Solution);
+			BuildDone = false;
+			BuildSucceeded = false;
+			
+
+			for (int i = 0; i < 3; ++i) { // simple but bad. MessageFilter to deal with busy COM state would be better
+				try {
+					if (!_vsInstance.Solution.IsOpen)
+						_vsInstance.Solution.Open(project.Solution);
+					_vsInstance.MainWindow.Visible = showWindow;
+
+					_vsInstance.Events.BuildEvents.OnBuildProjConfigBegin += OnBuildSolutionBegin;
+					_vsInstance.Events.BuildEvents.OnBuildProjConfigDone += OnBuildSolutionDone;
+
+					try {
+						// each new build requires a new pdb file (previous ones conflict in name). They're now marked with timestamp but don't need old ones, so just remove
+						foreach (var pdbFile in Directory.GetFiles(Path.Combine($"{project.Path}", $@"x64\{configName}"), "*.pdb"))
+							File.Delete(pdbFile);
+					} catch (Exception ex) { // if current dll is still loaded, attempted deletion might throw due to access not found
+						Debug.WriteLine(ex.Message); // we just catch in that case and overall should delete old enough pdb files so they dont stack up
+					}
+
+					_vsInstance.Solution.SolutionBuild.SolutionConfigurations.Item(configName).Activate();
+					_vsInstance.Solution.SolutionBuild.Build(true); // must wait to avoid race condition due to event callbacks
+					//_vsInstance.ExecuteCommand("Build.BuildSolution");
+					break;
+				} catch (Exception ex) {
+					Debug.WriteLine(ex.Message);
+					Debug.WriteLine($"Attempt {i}: failed to build {project.Name}");
+					System.Threading.Thread.Sleep(1000);
+				}
+			}
 		}
 	}
 }

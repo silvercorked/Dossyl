@@ -51,7 +51,7 @@ namespace DossylEditor.Editors
 		private Action GetRotationAction() => GetAction((x) => (x, x.Rotation), (x) => x.transform.Rotation = x.Item2);
 		private Action GetScaleAction() => GetAction((x) => (x, x.Scale), (x) => x.transform.Scale = x.Item2);
 
-		private void RecordAction(Action redoAction, string name) {
+		private void RecordActions(Action redoAction, string name) {
 			if (_propertyChanged) {
 				Debug.Assert(_undoAction != null);
 				_propertyChanged = false;
@@ -63,21 +63,21 @@ namespace DossylEditor.Editors
 			_undoAction = GetPositionAction();
 		}
 		private void OnPosition_VectorBox_PreviewMouse_LBU(object sender, MouseButtonEventArgs e) {
-			RecordAction(GetPositionAction(), "Position Changed");
+			RecordActions(GetPositionAction(), "Position Changed");
 		}
 		private void OnRotation_VectorBox_PreviewMouse_LBD(object sender, MouseButtonEventArgs e) {
 			_propertyChanged = false;
 			_undoAction = GetRotationAction();
 		}
 		private void OnRotation_VectorBox_PreviewMouse_LBU(object sender, MouseButtonEventArgs e) {
-			RecordAction(GetRotationAction(), "Rotation Changed");
+			RecordActions(GetRotationAction(), "Rotation Changed");
 		}
 		private void OnScale_VectorBox_PreviewMouse_LBD(object sender, MouseButtonEventArgs e) {
 			_propertyChanged = false;
 			_undoAction = GetScaleAction();
 		}
 		private void OnScale_VectorBox_PreviewMouse_LBU(object sender, MouseButtonEventArgs e) {
-			RecordAction(GetScaleAction(), "Scale Changed");
+			RecordActions(GetScaleAction(), "Scale Changed");
 		}
 		private void OnPosition_VectorBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			if (_propertyChanged && _undoAction != null) {
