@@ -15,9 +15,16 @@ namespace DossylEditor.EngineAPIStructs {
         public Vector3 Rotation;
         public Vector3 Scale = new Vector3(1, 1, 1);
     }
-    [StructLayout(LayoutKind.Sequential)]
+
+	[StructLayout(LayoutKind.Sequential)]
+	class ScriptComponent {
+		public IntPtr ScriptCreator;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
     class GameEntityDescriptor {
         public TransformComponent Transform = new TransformComponent();
+		public ScriptComponent Script = new ScriptComponent();
     }
 }
 
@@ -29,6 +36,11 @@ namespace DossylEditor.DllWrapper {
 		public static extern int LoadGameCodeDll(string dllPath);
 		[DllImport(_engineDll)]
 		public static extern int UnloadGameCodeDll();
+		[DllImport(_engineDll)]
+		public static extern IntPtr GetScriptCreator(string name); // don't actually call in editor but use it to pass creator funcs to engine
+		[DllImport(_engineDll)]
+		[return: MarshalAs(UnmanagedType.SafeArray)]
+		public static extern string[] GetScriptNames();
 
 		internal static class EntityAPI {
 			[DllImport(_engineDll)]
@@ -43,7 +55,10 @@ namespace DossylEditor.DllWrapper {
 					desc.Transform.Rotation = c.Rotation;
 					desc.Transform.Scale = c.Scale;
 				}
-
+				// script component
+				{
+					//var c = entity.GetComponent<Script>();
+				}
 				return CreateGameEntity(desc);
 			}
 

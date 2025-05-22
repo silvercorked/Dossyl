@@ -19,6 +19,16 @@ namespace Dossyl::Script {
 			return reg;
 		}
 
+#ifdef USE_WITH_EDITOR
+		auto scriptNames() -> Util::vector<std::string>& {
+			/* NOTE: static var placed in function because initialization order of static data
+					 this assures the script_registery is defined beforea class is registered.
+			*/
+			static Util::vector<std::string> names;
+			return names;
+		}
+#endif // end USE_WITH_EDITOR
+
 		auto exists(ScriptId id) -> bool {
 			assert(Id::isValid(id));
 			const Id::IdType index{ Id::index(id) };
@@ -36,6 +46,19 @@ namespace Dossyl::Script {
 			assert(result);
 			return static_cast<u8>(result);
 		}
+
+		auto getScriptCreator(size_t tag) -> script_creator {
+			auto script = Dossyl::Script::registery().find(tag);
+			assert(script != Dossyl::Script::registery().end() && script->first == tag);
+			return script->second;
+		}
+
+#ifdef USE_WITH_EDITOR
+		auto addScriptName(const char* name) -> u8 {
+			scriptNames().emplace_back(name);
+			return true;
+		}
+#endif // end USE_WITH_EDITOR
 	} // detail namespace
 
 	auto create(InitInfo info, GameEntity::Entity entity) -> Component {
@@ -76,3 +99,19 @@ namespace Dossyl::Script {
 		idMapping[Id::index(id)] = Id::invalidId;
 	}
 }
+
+#ifdef USE_WITH_EDITOR
+#include <atlsafe.h>
+
+extern "C" __declspec(dllexport)
+auto getScriptNames() -> LPSAFEARRAY {
+	// CComSafeArray takes a count type of unsigned long
+	const unsigned long size{ static_cast<unsigned long>(Dossyl::Script::scriptNames().size()) };
+	if (size == 0) return nullptr;
+	CComSafeArray<BSTR> names{ size };
+	for (auto i{ 0 }; i < size; ++i) { // copy data to BSTR format which .NET can use
+		names.SetAt(i, A2BSTR_EX(Dossyl::Script::scriptNames()[i].c_str()), false);
+	}
+	return names.Detach();
+}
+#endif
