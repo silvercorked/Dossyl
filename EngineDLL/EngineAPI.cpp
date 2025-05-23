@@ -49,7 +49,7 @@ EDITOR_INTERFACE auto GetScriptCreator(const char* name) -> Script::Detail::scri
 		: nullptr;
 }
 
-EDITOR_INTERFACE auto GetScriptNAmes() -> LPSAFEARRAY {
+EDITOR_INTERFACE auto GetScriptNames() -> LPSAFEARRAY {
 	return (gameCodeDll && getScriptNames)
 		? getScriptNames()
 		: nullptr;

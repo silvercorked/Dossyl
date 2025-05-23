@@ -49,6 +49,18 @@ namespace DossylEditor.GameProject {
 
 		public BuildConfiguration DllBuildConfig => BuildConfig == 0 ? BuildConfiguration.DebugEditor : BuildConfiguration.ReleaseEditor;
 
+		private string[] _availableScripts;
+
+		public string[] AvailableScripts {
+			get => _availableScripts;
+			set {
+				if (_availableScripts != value) {
+					_availableScripts = value;
+					OnPropertyChanged(nameof(AvailableScripts));
+				}
+			}
+		}
+
 		[DataMember(Name = "Scenes")]
         private ObservableCollection<Scene> _scenes = new ObservableCollection<Scene>();
         public ReadOnlyObservableCollection<Scene> Scenes { get; private set; }
@@ -143,14 +155,19 @@ namespace DossylEditor.GameProject {
 		private void LoadGameCodeDll() {
 			var configName = GetConfigurationName(DllBuildConfig);
 			var dll = $@"{Path}x64\{configName}\{Name}.dll";
-			if (File.Exists(dll) && EngineAPI.LoadGameCodeDll(dll) != 0)
+			AvailableScripts = null;
+			if (File.Exists(dll) && EngineAPI.LoadGameCodeDll(dll) != 0) {
+				AvailableScripts = EngineAPI.GetScriptNames();
 				Logger.Log(MessageType.Info, "Game code Dll loaded successfully");
+			}
 			else
 				Logger.Log(MessageType.Warning, "Failed to load game code dll file. Try to build the project first.");
 		}
 		private void UnloadGameCodeDll() {
-			if (EngineAPI.UnloadGameCodeDll() != 0)
+			if (EngineAPI.UnloadGameCodeDll() != 0) {
 				Logger.Log(MessageType.Info, "Game code Dll unloaded");
+				AvailableScripts = null;
+			}
 		}
 
 		

@@ -31,9 +31,9 @@ namespace DossylEditor.Components {
 			UpdateMSComponent();
 			_enableUpdates = true;
 		}
-		public MSComponent(MSEntity mSEntity) {
-			Debug.Assert(mSEntity?.SelectedEntities?.Any() == true);
-			SelectedComponents = mSEntity.SelectedEntities.Select(entity => entity.GetComponent<T>()).ToList();
+		public MSComponent(MSEntity msEntity) {
+			Debug.Assert(msEntity?.SelectedEntities?.Any() == true);
+			SelectedComponents = msEntity.SelectedEntities.Select(entity => entity.GetComponent<T>()).ToList();
 			PropertyChanged += (s, e) => {
 				if (_enableUpdates)
 					UpdateComponents(e.PropertyName);

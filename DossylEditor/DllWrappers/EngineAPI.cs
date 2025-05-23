@@ -57,7 +57,7 @@ namespace DossylEditor.DllWrapper {
 				}
 				// script component
 				{
-					//var c = entity.GetComponent<Script>();
+					var c = entity.GetComponent<Script>();
 				}
 				return CreateGameEntity(desc);
 			}
