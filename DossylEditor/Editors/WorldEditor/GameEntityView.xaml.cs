@@ -16,12 +16,23 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using DossylEditor.GameProject;
 using System.Windows.Controls.Primitives;
+using System.Globalization;
 
 namespace DossylEditor.Editors {
-    /// <summary>
-    /// Interaction logic for GameEntityView.xaml
-    /// </summary>
-    public partial class GameEntityView : UserControl {
+
+	public class NullableBoolToBoolConverter : IValueConverter {
+		public Object Convert(Object value, Type targetType, Object parameter, CultureInfo culture) {
+			return value is bool b && b == true;
+		}
+
+		public Object ConvertBack(Object value, Type targetType, Object parameter, CultureInfo culture) {
+			return value is bool b && b == true;
+		}
+	}
+	/// <summary>
+	/// Interaction logic for GameEntityView.xaml
+	/// </summary>
+	public partial class GameEntityView : UserControl {
         private Action _undoAction;
         private string _propertyName;
         public static GameEntityView Instance { get; private set; }

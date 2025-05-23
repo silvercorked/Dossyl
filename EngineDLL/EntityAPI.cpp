@@ -5,6 +5,7 @@
 #include "Id.h"
 #include "..\Engine\Components\Entity.h"
 #include "..\Engine\Components\Transform.h"
+#include "..\Engine\Components\Script.h"
 
 using namespace Dossyl;
 
@@ -27,8 +28,17 @@ namespace {
 			return info;
 		}
 	};
+	struct ScriptComponent {
+		Script::Detail::script_creator scriptCreator;
+		auto toInitInfo() const -> Script::InitInfo {
+			Script::InitInfo info{};
+			info.scriptCreator = this->scriptCreator;
+			return info;
+		}
+	};
 	struct GameEntityDescriptor {
 		TransformComponent transform;
+		ScriptComponent script;
 	};
 
 	GameEntity::Entity entityFromId(Id::IdType id) {
@@ -40,7 +50,11 @@ EDITOR_INTERFACE auto CreateGameEntity(GameEntityDescriptor* e) -> Id::IdType {
 	assert(e);
 	GameEntityDescriptor& desc{ *e };
 	Transform::InitInfo transformInfo{ desc.transform.toInitInfo() };
-	GameEntity::EntityInfo entityInfo{ &transformInfo };
+	Script::InitInfo scriptInfo{ desc.script.toInitInfo() };
+	GameEntity::EntityInfo entityInfo{
+		&transformInfo,
+		&scriptInfo
+	};
 	return GameEntity::create(entityInfo).getId();
 }
 

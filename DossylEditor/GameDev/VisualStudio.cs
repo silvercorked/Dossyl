@@ -125,14 +125,15 @@ namespace DossylEditor.GameDev {
 		}
 		public static bool IsDebugging() {
 			bool result = false;
-			for (int i = 0; i < 3; ++i) {
+			bool tryAgain = true;
+			for (int i = 0; i < 3 && tryAgain; ++i) {
 				try {
 					result = _vsInstance != null &&
 						(_vsInstance.Debugger.CurrentProgram != null || _vsInstance.Debugger.CurrentMode == EnvDTE.dbgDebugMode.dbgRunMode);
-					break;
+					tryAgain = false;
 				} catch (Exception ex) {
 					Debug.WriteLine(ex.Message);
-					if (!result) System.Threading.Thread.Sleep(1000);
+					System.Threading.Thread.Sleep(1000);
 				}
 			}
 			return result;
@@ -149,7 +150,7 @@ namespace DossylEditor.GameDev {
 			BuildSucceeded = false;
 			
 
-			for (int i = 0; i < 3; ++i) { // simple but bad. MessageFilter to deal with busy COM state would be better
+			for (int i = 0; i < 3 && !BuildDone; ++i) { // simple but bad. MessageFilter to deal with busy COM state would be better
 				try {
 					if (!_vsInstance.Solution.IsOpen)
 						_vsInstance.Solution.Open(project.Solution);
@@ -169,7 +170,6 @@ namespace DossylEditor.GameDev {
 					_vsInstance.Solution.SolutionBuild.SolutionConfigurations.Item(configName).Activate();
 					_vsInstance.Solution.SolutionBuild.Build(true); // must wait to avoid race condition due to event callbacks
 					//_vsInstance.ExecuteCommand("Build.BuildSolution");
-					break;
 				} catch (Exception ex) {
 					Debug.WriteLine(ex.Message);
 					Debug.WriteLine($"Attempt {i}: failed to build {project.Name}");

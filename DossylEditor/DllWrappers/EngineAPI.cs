@@ -1,7 +1,10 @@
 ﻿using DossylEditor.Components;
 using DossylEditor.EngineAPIStructs;
+using DossylEditor.GameProject;
+using DossylEditor.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -57,7 +60,16 @@ namespace DossylEditor.DllWrapper {
 				}
 				// script component
 				{
+					// Note: here we check if the current project is not null. if null, game code dll hasn't been loaded yet.
 					var c = entity.GetComponent<Script>();
+					if (c != null && Project.Current != null) {
+						if (Project.Current.AvailableScripts.Contains(c.Name)) {
+							desc.Script.ScriptCreator = GetScriptCreator(c.Name);
+						}
+						else {
+							Logger.Log(MessageType.Error, $"Unable to find script with name {c.Name}. Game entity will be created without script component!");
+						}
+					}
 				}
 				return CreateGameEntity(desc);
 			}

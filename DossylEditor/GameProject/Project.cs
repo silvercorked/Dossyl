@@ -1,4 +1,5 @@
-﻿using DossylEditor.DllWrapper;
+﻿using DossylEditor.Components;
+using DossylEditor.DllWrapper;
 using DossylEditor.GameDev;
 using DossylEditor.Utilities;
 using Microsoft.VisualStudio.VSHelp;
@@ -132,6 +133,7 @@ namespace DossylEditor.GameProject {
             return Serializer.FromFile<Project>(file);
         }
         public void Unload() {
+			UnloadGameCodeDll();
 			VisualStudio.CloseVisualStudio();
             undoRedo.Reset();
         }
@@ -158,19 +160,19 @@ namespace DossylEditor.GameProject {
 			AvailableScripts = null;
 			if (File.Exists(dll) && EngineAPI.LoadGameCodeDll(dll) != 0) {
 				AvailableScripts = EngineAPI.GetScriptNames();
+				ActiveScene.GameEntities.Where(x => x.GetComponent<Script>() != null).ToList().ForEach(x => x.IsActive = true);
 				Logger.Log(MessageType.Info, "Game code Dll loaded successfully");
 			}
 			else
 				Logger.Log(MessageType.Warning, "Failed to load game code dll file. Try to build the project first.");
 		}
 		private void UnloadGameCodeDll() {
+			ActiveScene.GameEntities.Where(x => x.GetComponent<Script>() != null).ToList().ForEach(x => x.IsActive = false);
 			if (EngineAPI.UnloadGameCodeDll() != 0) {
 				Logger.Log(MessageType.Info, "Game code Dll unloaded");
 				AvailableScripts = null;
 			}
 		}
-
-		
 
 		[OnDeserialized]
         private async void OnDeserialized(StreamingContext context) {
@@ -179,6 +181,7 @@ namespace DossylEditor.GameProject {
                 OnPropertyChanged(nameof(Scenes));
             }
             ActiveScene = Scenes.FirstOrDefault(x => x.IsActive);
+			Debug.Assert(ActiveScene != null);
 
 			await BuildGameCodeDll(false);
 
@@ -188,7 +191,6 @@ namespace DossylEditor.GameProject {
             Name = name;
             Path = path;
 
-            
             OnDeserialized(new StreamingContext());
         }
     }
